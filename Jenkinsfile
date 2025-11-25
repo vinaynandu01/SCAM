@@ -1,11 +1,6 @@
 pipeline {
     agent any
     
-    // This allows manual triggering only (no automatic builds)
-    triggers {
-        // Empty - pipeline will only run when manually triggered
-    }
-    
     stages {
         stage('Build') {
             steps {
