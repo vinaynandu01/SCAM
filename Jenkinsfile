@@ -1,16 +1,12 @@
 pipeline {
     agent any
     
-    tools {
-        nodejs 'NodeJS'  // Make sure NodeJS is configured in Jenkins Global Tool Configuration
-    }
-    
     stages {
         stage('Build') {
             steps {
                 echo 'Starting Build Stage...'
                 checkout scm
-                sh 'npm install'
+                bat 'npm install'
                 echo 'Build Stage Completed!'
             }
         }
@@ -18,7 +14,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Starting Test Stage...'
-                sh 'npm test || echo "Tests completed with warnings"'
+                bat 'npm test || exit 0'
                 echo 'Test Stage Completed!'
             }
         }
@@ -30,9 +26,6 @@ pipeline {
         }
         failure {
             echo 'Pipeline failed!'
-        }
-        always {
-            echo 'Pipeline execution finished.'
         }
     }
 }
