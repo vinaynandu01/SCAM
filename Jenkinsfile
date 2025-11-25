@@ -1,33 +1,37 @@
 pipeline {
-  agent any
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    agent any
+    
+    // This allows manual triggering only (no automatic builds)
+    triggers {
+        // Empty - pipeline will only run when manually triggered
     }
-    stage('Install') {
-      steps {
-        sh 'npm ci'
-      }
+    
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Starting Build Stage...'
+                checkout scm
+                sh 'npm ci'
+                sh 'docker build -t smart-attendance:latest .'
+                echo 'Build Stage Completed!'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo 'Starting Test Stage...'
+                sh 'npm test'
+                echo 'Test Stage Completed!'
+            }
+        }
     }
-    stage('Test') {
-      steps {
-        sh 'npm test || true'
-      }
+    
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
     }
-    stage('Build Docker') {
-      steps {
-        sh 'docker build -t smart-attendance:latest .'
-      }
-    }
-  }
-  post {
-    success {
-      echo 'Build succeeded'
-    }
-    failure {
-      echo 'Build failed'
-    }
-  }
 }
